@@ -27,16 +27,16 @@ public class InjectorImpl implements Injector {
     public synchronized <T> Provider<T> getProvider(final Class<T> intf) throws Exception {
         Class<?> type;
 
-        // Looking for bindings in hashmap, if exists, get implementation class
+
         if (bindings.get(intf) != null) {
             type = bindings.get(intf);
-        } else if (singletonBindings.get(intf) != null) { // if it was not found in bindings, searching in singletons,
-            return (Provider<T>) returnProvider(singletonBindings.get(intf)); // if found, return provider with instance
-        } else throw new BindingNotFoundException(); // else throw exception
+        } else if (singletonBindings.get(intf) != null) {
+            return (Provider<T>) returnProvider(singletonBindings.get(intf));
+        } else throw new BindingNotFoundException();
 
-        final T finalObject = getObjectFromContainer(type); // if interface was found in bindings, create an object of implementation type
+        final T finalObject = getObjectFromContainer(type);
 
-        return returnProvider(finalObject); // return provider with instance
+        return returnProvider(finalObject);
     }
 
     /**
@@ -58,15 +58,15 @@ public class InjectorImpl implements Injector {
     public <T> void bindSingleton(Class<T> intf, Class<? extends T> impl) throws Exception {
         Constructor<?> constructorToWork = null;
         Object o;
-        for (Constructor<?> constr : impl.getConstructors()) { // looking for constructors with @Inject annotation
+        for (Constructor<?> constr : impl.getConstructors()) {
             if (constr.getAnnotation(Inject.class) != null) {
                 constructorToWork = constr;
             }
         }
 
-        if (constructorToWork != null) { // if there is at least 1, create an instance of that class
+        if (constructorToWork != null) {
             o = getObjectFromContainer(impl);
-        } else { // else looking for constructor with no params
+        } else {
             o = createObject(impl);
         }
         getSingletonBindings().put(intf, o);
@@ -83,7 +83,7 @@ public class InjectorImpl implements Injector {
      * @return instance of implementation type from container
      */
     private <T> T getObjectFromContainer(Class<?> type) throws Exception {
-        Constructor<?> constructor = validateClass(type); // validating class and getting constructor to work with
+        Constructor<?> constructor = validateClass(type);
 
         Class<?>[] parameterTypes = constructor.getParameterTypes();
 
@@ -91,10 +91,10 @@ public class InjectorImpl implements Injector {
 
         for (Class<?> parameterType : parameterTypes) {
             if (bindings.containsKey(parameterType)) {
-                objects.add(createObject(bindings.get(parameterType))); // for each parameter type creating an instance and adding it to list
+                objects.add(createObject(bindings.get(parameterType)));
             } else if (singletonBindings.containsKey(parameterType)) {
-                objects.add(singletonBindings.get(parameterType)); // singleton instances are already in container
-            }                                // idk how to realize lazy injection, so just get them from hashmap
+                objects.add(singletonBindings.get(parameterType));
+            }
         }
 
         return (T) constructor.newInstance(objects.toArray());
@@ -119,9 +119,9 @@ public class InjectorImpl implements Injector {
                 counter++;
             }
         }
-        if (counter > 1) // if more than 1 @Inject constructors throw exception
+        if (counter > 1)
             throw new TooManyConstructorsException();
-        if (constructorToWork == null) { // if no @Inject constructors, look for defaultConstructors, if no, throw exception
+        if (constructorToWork == null) {
             List<Constructor<?>> constructorList = Arrays.stream(constructors)
                     .filter(constructor -> constructor.getParameterCount() == 0)
                     .collect(Collectors.toList());
@@ -130,12 +130,12 @@ public class InjectorImpl implements Injector {
             else
                 throw new ConstructorNotFoundException();
         }
-        for (Class<?> parameter : constructorToWork.getParameterTypes()) { // if parameter was not found in container, throw exception
+        for (Class<?> parameter : constructorToWork.getParameterTypes()) {
             if (!bindings.containsKey(parameter) && !singletonBindings.containsKey(parameter))
                 throw new BindingNotFoundException();
         }
 
-        return constructorToWork; // return constructor in which instances will be injected
+        return constructorToWork;
     }
 
     /**
@@ -151,14 +151,14 @@ public class InjectorImpl implements Injector {
         }
 
         if (constructorToWork != null) {
-            return getObjectFromContainer(impl); // If there is one, params are injected in it from container
+            return getObjectFromContainer(impl);
         }
-        // looking for default constructor, if none was found, throw exception
+
         List<Constructor<?>> defaultConstructor = Arrays.stream(impl.getDeclaredConstructors())
                 .filter(constructor -> constructor.getParameterCount() == 0)
                 .collect(Collectors.toList());
         if (defaultConstructor.size() != 0) {
-            return defaultConstructor.get(0).newInstance(); // create an instance using default constructor
+            return defaultConstructor.get(0).newInstance(); 
         } else throw new ConstructorNotFoundException();
     }
 

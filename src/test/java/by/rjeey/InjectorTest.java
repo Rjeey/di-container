@@ -28,24 +28,24 @@ public class InjectorTest {
         Provider<EventService> serviceProvider = injector.getProvider(EventService.class);
 
         Provider<EventDao> daoProvider = injector.getProvider(EventDao.class);
-        
-        assertNotNull(serviceProvider); // testing if Provider with @Inject constructor NN
 
-        assertNotNull(daoProvider); // testing if Provider with default constructor NN
+        assertNotNull(serviceProvider);
 
-        assertNotNull(daoProvider.getInstance()); // testing if instance with default constructor NN
+        assertNotNull(daoProvider);
 
-        assertNotNull(serviceProvider.getInstance()); // testing if instance with @Inject constructor NN
+        assertNotNull(daoProvider.getInstance());
 
-        assertNotNull(serviceProvider.getInstance().getDao()); // testing if field of injected instance NN
+        assertNotNull(serviceProvider.getInstance());
 
-        assertSame(EventServiceImpl.class, serviceProvider.getInstance().getClass()); // testing if instance of Provider<EventService> is actually EventServiceImpl
+        assertNotNull(serviceProvider.getInstance().getDao());
 
-        assertSame(EventDaoImpl.class, daoProvider.getInstance().getClass()); // testing if instance of Provider<EventDao> is actually EventDaoImpl
+        assertSame(EventServiceImpl.class, serviceProvider.getInstance().getClass());
+
+        assertSame(EventDaoImpl.class, daoProvider.getInstance().getClass());
     }
 
     @Test
-    public void testSingletonInjection() throws Exception { // the same as previous but with singletons
+    public void testSingletonInjection() throws Exception {
         Injector injector = new InjectorImpl();
         injector.bindSingleton(EventDao.class, EventDaoImpl.class);
         injector.bindSingleton(EventService.class, EventServiceImpl.class);
@@ -64,7 +64,7 @@ public class InjectorTest {
     }
 
     @Test
-    public void testExceptions() { // testing exceptions
+    public void testExceptions() {
         Injector injector = new InjectorImpl();
         injector.bind(EventDao.class, EventDaoImpl.class);
         injector.bind(ClassWithNoDefaultConstructor.class, ClassWithNoDefaultConstructorImpl.class);
@@ -77,7 +77,7 @@ public class InjectorTest {
         assertThrows(TooManyConstructorsException.class, () -> injector.getProvider(ClassWithManyConstructors.class));
     }
 
-    @Test // testing many levels of injection EventController -> EventService -> EventDao, EventController also has SingletonClass field
+    @Test
     public void manyLevelsInjectionTest() throws Exception{
         Injector injector = new InjectorImpl();
         injector.bind(EventDao.class, EventDaoImpl.class);
