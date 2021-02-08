@@ -158,7 +158,7 @@ public class InjectorImpl implements Injector {
                 .filter(constructor -> constructor.getParameterCount() == 0)
                 .collect(Collectors.toList());
         if (defaultConstructor.size() != 0) {
-            return defaultConstructor.get(0).newInstance(); 
+            return defaultConstructor.get(0).newInstance();
         } else throw new ConstructorNotFoundException();
     }
 
