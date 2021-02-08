@@ -1,0 +1,10 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<testsuite name="by.rjeey.InjectorTest" tests="4" skipped="0" failures="0" errors="0" timestamp="2021-02-08T13:06:24" hostname="ART" time="0.099">
+  <properties/>
+  <testcase name="testExceptions()" classname="by.rjeey.InjectorTest" time="0.041"/>
+  <testcase name="manyLevelsInjectionTest()" classname="by.rjeey.InjectorTest" time="0.013"/>
+  <testcase name="testSingletonInjection()" classname="by.rjeey.InjectorTest" time="0.01"/>
+  <testcase name="testInjection()" classname="by.rjeey.InjectorTest" time="0.008"/>
+  <system-out><![CDATA[]]></system-out>
+  <system-err><![CDATA[]]></system-err>
+</testsuite>
